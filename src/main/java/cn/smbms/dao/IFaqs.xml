@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.IFaqs">
+    <resultMap id="requestMappi" type="faqs">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="createdate" property="createdate"></result>
+        <result column="content" property="content"></result>
+        <result column="classid" property="classid"></result>
+        <collection property="cla" ofType="classes">
+            <id column="id" property="id"></id>
+            <result column="cname" property="cname"></result>
+        </collection>
+    </resultMap>
+    <select id="selectListAll" resultMap="requestMappi">
+     select * from faqs,classes WHERE faqs.classid=classes.id
+    </select>
+
+    <insert id="addList" >
+        insert into faqs(title,createdate,content,classid)
+        values(#{title},#{createdate},#{content},#{classid})
+    </insert>
+    <select id="selectListLike" resultMap="requestMappi" parameterType="String">
+        select * from faqs,classes where faqs.classid=classes.id and title like '%${_parameter}%'
+    </select>
+    <select id="ListView" resultMap="requestMappi">
+        select * from faqs ,classes WHERE faqs.classid=classes.id and title=#{title}
+    </select>
+
+    <resultMap id="cateMapper" type="Bookcategory">
+        <id property="cateid" column="cateid"></id>
+        <result property="catename" column="catename"></result>
+        <collection property="cate" ofType="Bookcategory" select="getCateById" column="cateid"/>
+    </resultMap>
+    <select id="getCateById" resultMap="cateMapper" >
+        SELECT cateid,catename,pid from bookcategory where pid=#{cid}
+    </select>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.IUserDao">
+
+    <resultMap id="ReMapperByPro" type="User">
+        <id column="id" property="id"></id>
+        <result column="userCode" property="userCode"></result>
+        <result column="userName" property="userName"></result>
+        <result column="gender" property="gender"></result>
+        <result column="birthday" property="birthday"></result>
+        <result column="phone" property="phone"></result>
+        <result column="address" property="address"></result>
+        <result column="userRole" property="userRole"></result>
+        <association property="role" javaType="Role" select="UserId" column="userRole"></association>
+    </resultMap>
+<!--1.登录-->
+<select id="isLogin" resultMap="ReMapperByPro">
+    select userCode,userPassword,userName from subms_user where userCode=#{userCode} and userPassword=#{userPassword}
+</select>
+<!--分页查询-->
+<select id="UserLimit" resultType="User">
+select * FROM subms_user ORDER BY id DESC limit #{pageIndex},#{pageSize}
+</select>
+<!--查询总记录数-->
+<select id="count"  resultType="int">
+    select count(1) as count from subms_user
+</select>
+<!--添加用户-->
+   <insert id="Useradd" >
+        insert into subms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createBy,createDate,idPicPath,workPicPath)
+        values(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{idPicPath},#{workPicPath})
+    </insert>
+    <!--<insert id="Useradd" >
+        insert into subms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createBy,createDate)
+        values(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate})
+    </insert>-->
+<!--
+    <delete id="userdel">
+        DELETE from subms_user where id=#{id}
+    </delete>-->
+    <delete id="userdel" parameterType="int">
+        DELETE FROM subms_user WHERE id IN
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <!--修改的赋值  根据id查找-->
+    <select id="userId" resultType="User">
+        select * from  subms_user where id=#{id}
+    </select>
+
+    <update id="userUpdate" >
+        update subms_user set userName=#{userName},gender=#{gender},birthday=#{birthday},phone=#{phone},address=#{address},userRole=#{userRole},modfiyDate=#{modfiyDate},modifyBy=#{modifyBy} where id=#{id}
+    </update>
+
+    <select id="likeUserName"  resultType="User">
+          select * from subms_user  where userName  like '%${userName}%' limit #{pageIndex},#{pageSize}
+    </select>
+    <select id="UserListSelect" resultType="User">
+        select * from subms_user
+    </select>
+    <update id="updatepwd">
+        UPDATE subms_user set userPassword=#{0} where userCode=#{1}
+    </update>
+</mapper>

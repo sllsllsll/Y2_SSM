@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.IBillDao">
+   <!-- <resultMap id="BillByProvider" type="Bill">
+        <id column="id" property="id"></id>
+        <result column="billCode" property="billCode"></result>
+        <result column="productName" property="productName"></result>
+        <result column="totalPrice" property="totalPrice"></result>
+        <result column="isPayment" property="isPayment"></result>
+        <result column="creationDate" property="creationDate"></result>
+        <result column="providerId" property="providerId"></result>
+        <association property="pro" javaType="Provider" select="BillId" column="providerId"></association>
+    </resultMap>
+
+    <select id="billId" resultType="Provider">
+        SELECT proName FROM subms_provider WHERE proCode=#{proCode}
+    </select>
+    <select id="BillLimit" resultType="Bill">
+          select *  from subms_bill  limit #{pageIndex},#{pageSize}
+    </select>
+    <select id="count"  resultType="int">
+        select count(1) as count from subms_bill
+    </select>
+    <select id="billselectlist" resultType="Bill">
+        select productUnit from subms_bill
+    </select>
+    &lt;!&ndash;?????&ndash;&gt;
+    <select id="BillselectLike" resultType="Bill">
+        select * from subms_bill
+        <where>
+            <if test="productName!=null and productName!=''">
+                and productName like '%${productName}%'
+            </if>
+            <if test="productUnit!=null and productUnit!=''">
+                and productUnit=#{productUnit}
+            </if>
+            <if test="isPayment!=null and isPayment!=''">
+                and isPayment=#{isPayment}
+            </if>
+
+        </where>
+        #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="getTotalCountByUserName" resultType="int">
+        select count(1) from smbms_user WHERE productName like  '%' #{productName} '%' and productUnit like '%' #{productUnit} '%'
+         and isPayment like '%' #{isPayment} '%'
+    </select>-->
+
+    <resultMap id="BillByProvider" type="Bill">
+        <id column="id" property="id"></id>
+        <result column="billCode" property="billCode"></result>
+        <result column="productName" property="productName"></result>
+        <result column="totalPrice" property="totalPrice"></result>
+        <result column="isPayment" property="isPayment"></result>
+        <result column="creationDate" property="creationDate"></result>
+        <result column="providerId" property="providerId"></result>
+        <association property="pro" javaType="Provider" select="BillId" column="providerId"></association>
+    </resultMap>
+
+    <select id="BillId" resultType="Provider">
+        SELECT proName FROM subms_provider WHERE proCode=#{proCode}
+    </select>
+    <select id="BillLimit" resultMap="BillByProvider">
+        SELECT * FROM subms_bill LIMIT  #{from},#{pagesize}
+    </select>
+    <select id="count"  resultType="int">
+        select count(1) as count from subms_bill
+    </select>
+
+    <!--delete-->
+    <delete id="Billdel">
+        DELETE from subms_bill where id=#{id}
+    </delete>
+
+    <!--insert-->
+    <insert id="addBill">
+        insert into subms_bill(billCode,productName,productUnit,productCount,totalPrice,providerId,isPayment,createdBy,creationDate)
+        values(#{billCode},#{productName},#{productUnit},#{productCount},#{totalPrice},#{providerId},#{isPayment},#{createdBy},#{creationDate})
+    </insert>
+    <select id="selectBillByid" resultMap="BillByProvider">
+        select * from subms_bill where id=#{id}
+    </select>
+    <select id="billselectlist" resultType="Bill">
+        select productUnit from subms_bill
+    </select>
+
+    <select id="Billselect" resultType="Bill">
+        select * from subms_bill
+        <where>
+            <if test="productName!=null and productName!=''">
+                and productName like '%${productName}%'
+            </if>
+            <if test="productUnit!=null and productUnit!=''">
+                and productUnit=#{productUnit}
+            </if>
+            <if test="isPayment!=null and isPayment!=''">
+                and isPayment=#{isPayment}
+            </if>
+
+        </where>
+        limit #{from},#{pagesize}
+    </select>
+</mapper>
